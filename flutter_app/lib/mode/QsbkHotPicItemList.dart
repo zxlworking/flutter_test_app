@@ -1,4 +1,4 @@
-import 'QsbkHotPicItem.dart';
+import 'package:flutter_app/mode/QsbkHotPicItem.dart';
 
 class QsbkHotPicItemList {
   List<QsbkHotPicItem> itemList;

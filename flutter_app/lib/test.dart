@@ -1,8 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_app/QsbkHotPicItem.dart';
-import 'package:flutter_app/QsbkHotPicItemList.dart';
+import 'package:flutter_app/mode/DayWord.dart';
+import 'package:flutter_app/mode/QsbkHotPicItem.dart';
+import 'package:flutter_app/mode/QsbkHotPicItemList.dart';
+import 'package:flutter_app/widget/MarqueeWidget.dart';
 import 'dart:convert';
+
+import 'package:flutter_app/widget/QsbkHotPicItemWidget.dart';
 
 void main() => runApp(new MyApp());
 
@@ -13,33 +19,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
+
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'title'),
+      home: MyHomePage(title: ''),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -48,18 +37,64 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var isLoadingQsbkHotPic = false;
+  var mQsbkHotPicPageSize = 10;
+  var mQsbkHotPicPage = 0;
   QsbkHotPicItemList mQsbkHotPicItemList;
+  DayWord mDayWord;
 
-  void getHttp() async {
+  void getQsbkHotPic() async {
+    if(isLoadingQsbkHotPic){
+      return;
+    }
+    isLoadingQsbkHotPic = true;
     try {
-      Response response = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=0&page_size=100");
+      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+      QsbkHotPicItemList qsbkHotPicItemList = new QsbkHotPicItemList.fromJson(json.decode(qsbkHotPicResponse.data));
 
-      mQsbkHotPicItemList = new QsbkHotPicItemList.fromJson(json.decode(response.data));
-      print('mQsbkHotPicItemList.length = ');
-      print(mQsbkHotPicItemList.itemList.length);
-      mQsbkHotPicItemList.itemList.forEach((qsbkHotPicItem){
-        print(qsbkHotPicItem.authorNickName + "---" + qsbkHotPicItem.content);
+      print("page::$mQsbkHotPicPage::$isLoadingQsbkHotPic");
+
+      if(qsbkHotPicItemList == null){
+        print("mQsbkHotPicItemList::is null");
+        isLoadingQsbkHotPic = false;
+        return;
+      }
+      if(qsbkHotPicItemList.itemList == null){
+        print("mQsbkHotPicItemList.itemList::is null");
+        isLoadingQsbkHotPic = false;
+        return;
+      }
+      if(qsbkHotPicItemList.itemList.isEmpty == null){
+        print("mQsbkHotPicItemList.itemList::is isEmpty");
+        isLoadingQsbkHotPic = false;
+        return;
+      }
+
+      if(mQsbkHotPicItemList == null){
+        mQsbkHotPicItemList = qsbkHotPicItemList;
+      }else{
+        mQsbkHotPicItemList.itemList.addAll(qsbkHotPicItemList.itemList);
+      }
+
+      /*mQsbkHotPicItemList.itemList.forEach((item){
+        print("item::${item.authorNickName}");
+      });*/
+
+      setState(() {
       });
+
+      isLoadingQsbkHotPic = false;
+      mQsbkHotPicPage++;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void getDayWOrd() async {
+    try {
+      DateTime now = DateTime.now();
+      Response dayWordResponse = await Dio().get("http://open.iciba.com/dsapi/?date=${now.year}-${now.month}-${now.day}");
+      mDayWord = new DayWord.fromJson(json.decode(dayWordResponse.data));
 
       setState(() {
 
@@ -73,14 +108,46 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getHttp();
+    getQsbkHotPic();
+    getDayWOrd();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: mDayWord == null ?
+            Text(
+                widget.title
+            )
+            :
+            MarqueeWidget(
+                Container(
+                  width: window.physicalSize.width / 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "${mDayWord.content}",
+                        style: TextStyle(
+                            fontSize: 14
+                        ),
+                      ),
+                      Text(
+                        "${mDayWord.note}",
+                        style: TextStyle(
+                            fontSize: 12
+                        ),
+                      ),
+                    ],
+                  ),
+                  alignment: Alignment.centerLeft,
+                ),
+                0.0,
+                new Duration(seconds: 5),
+                230.0
+            )
       ),
       body: Center(
         child :
@@ -98,14 +165,16 @@ class _MyHomePageState extends State<MyHomePage> {
               :
           ListView.separated(
               itemBuilder: (BuildContext context, int index) {
+
+                if(index == mQsbkHotPicItemList.itemList.length - 1){
+                  getQsbkHotPic();
+                }
+
                 QsbkHotPicItem qsbkHotPicItem = mQsbkHotPicItemList.itemList.elementAt(index);
-                return new Text(
-                  "$index --- ${qsbkHotPicItem.authorNickName}",
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 14,
-                  ),
-                );
+                print("item::index = " + "$index");
+                print("item::url = " + qsbkHotPicItem.thumbImgUrl);
+                print(qsbkHotPicItem.authorNickName + "---" + qsbkHotPicItem.content);
+                return new QsbkHotPicItemWidget().createItemWidget(qsbkHotPicItem);
               },
               separatorBuilder: (BuildContext context, int index) {
                 return new Container(height: 1.0, color: Colors.blue);
