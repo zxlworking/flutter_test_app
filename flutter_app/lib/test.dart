@@ -10,6 +10,8 @@ import 'dart:convert';
 
 import 'package:flutter_app/widget/QsbkHotPicItemWidget.dart';
 
+import 'day_word_page.dart';
+
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+//https://www.qiushibaike.com/commentpage/122204240?page=1&count=10
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -49,7 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     isLoadingQsbkHotPic = true;
     try {
-      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+//      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+      Response qsbkHotPicResponse = await Dio().get("http://10.234.199.73:9090/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
       QsbkHotPicItemList qsbkHotPicItemList = new QsbkHotPicItemList.fromJson(json.decode(qsbkHotPicResponse.data));
 
       print("page::$mQsbkHotPicPage::$isLoadingQsbkHotPic");
@@ -104,6 +109,18 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  void clickTitle(DayWord dayWord){
+    print("clickTitle");
+    Navigator.push(context, MaterialPageRoute(builder: (context){
+      return new DayWordPage(mDayWord);
+    }));
+//    Navigator.push(
+//        context, new MaterialPageRoute(builder: (BuildContext context) {
+////            return new SecondApp(); //不传值的跳转
+////      return new SecondApp(todo: todos[i]);//带传值的跳转
+//    }));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -121,32 +138,35 @@ class _MyHomePageState extends State<MyHomePage> {
                 widget.title
             )
             :
-            MarqueeWidget(
-                Container(
-                  width: window.physicalSize.width / 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "${mDayWord.content}",
-                        style: TextStyle(
-                            fontSize: 14
+            GestureDetector(
+              child: MarqueeWidget(
+                  Container(
+                    width: window.physicalSize.width / 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "${mDayWord.content}",
+                          style: TextStyle(
+                              fontSize: 14
+                          ),
                         ),
-                      ),
-                      Text(
-                        "${mDayWord.note}",
-                        style: TextStyle(
-                            fontSize: 12
+                        Text(
+                          "${mDayWord.note}",
+                          style: TextStyle(
+                              fontSize: 12
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    alignment: Alignment.centerLeft,
                   ),
-                  alignment: Alignment.centerLeft,
-                ),
-                0.0,
-                new Duration(seconds: 5),
-                230.0
+                  0.0,
+                  new Duration(seconds: 5),
+                  230.0
+              ),
+              onTap: (){clickTitle(mDayWord);},
             )
       ),
       body: Center(
@@ -172,7 +192,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 QsbkHotPicItem qsbkHotPicItem = mQsbkHotPicItemList.itemList.elementAt(index);
                 print("item::index = " + "$index");
-                print("item::url = " + qsbkHotPicItem.thumbImgUrl);
+                print("item::authorImgUrl = " + qsbkHotPicItem.authorImgUrl);
+                print("item::thumbImgUrl = " + qsbkHotPicItem.thumbImgUrl);
                 print(qsbkHotPicItem.authorNickName + "---" + qsbkHotPicItem.content);
                 return new QsbkHotPicItemWidget().createItemWidget(qsbkHotPicItem);
               },

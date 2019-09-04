@@ -8,12 +8,18 @@ class QsbkHotPicItemWidget{
 
   Widget createItemWidget(QsbkHotPicItem qsbkHotPicItem){
     return
-      new Column(
-          children: <Widget>[
-            _createAuthorInfoWidget(qsbkHotPicItem),
-            _createContentWidget(qsbkHotPicItem),
-            _createThumbWidget(qsbkHotPicItem),
-          ]
+      new GestureDetector(
+        child: new Column(
+                  children: <Widget>[
+                    _createAuthorInfoWidget(qsbkHotPicItem),
+                    _createContentWidget(qsbkHotPicItem),
+                    _createThumbWidget(qsbkHotPicItem),
+                    _createVoteCommentWidget(qsbkHotPicItem)
+                  ]
+              ),
+        onTap:(){
+          //http://10.234.199.73:9090/test/qsbk_hot_pic/detail?hot_pic_id=98
+        }
       );
   }
 
@@ -104,8 +110,11 @@ class QsbkHotPicItemWidget{
   }
 
   Widget _createThumbWidget(QsbkHotPicItem qsbkHotPicItem){
+    if(qsbkHotPicItem.thumbImgUrl == null || qsbkHotPicItem.thumbImgUrl.isEmpty) {
+      return Container();
+    }
     return Padding(
-      padding: const EdgeInsets.only(left: 18.0, top:4, right: 18.0,bottom: 8),
+      padding: const EdgeInsets.only(left: 8.0, top:4, right: 8.0,bottom: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Center(
@@ -117,6 +126,33 @@ class QsbkHotPicItemWidget{
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _createVoteCommentWidget(QsbkHotPicItem qsbkHotPicItem){
+    String intervalStr = "";
+    if((qsbkHotPicItem.statsVoteContent != null && qsbkHotPicItem.statsVoteContent.isNotEmpty) &&
+        (qsbkHotPicItem.statsCommentContent != null && qsbkHotPicItem.statsCommentContent.isNotEmpty)){
+      intervalStr = " · ";
+    }
+    return Container(
+      margin: EdgeInsets.fromLTRB(10,0,8,4),
+      color: Colors.white70,
+      child: Row(
+        children: <Widget>[
+          Text(
+            //487 好笑 · 18 评论
+            "${qsbkHotPicItem.statsVoteContent}" + intervalStr + "${qsbkHotPicItem.statsCommentContent}",
+              softWrap: true,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic
+              )
+          )
+        ],
       ),
     );
   }
