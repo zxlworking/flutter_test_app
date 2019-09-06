@@ -3,12 +3,12 @@ import 'package:flutter_app/mode/QsbkHotPicItem.dart';
 
 import '../HotPicJokeDetailPage.dart';
 
-class QsbkHotPicItemWidget{
+class QsbkHotPicDetailWidget{
 
   static const String GENDER_WOMEN = "articleGender womenIcon";
   static const String GENDER_MEN = "articleGender manIcon";
 
-  Widget createItemWidget(BuildContext context, QsbkHotPicItem qsbkHotPicItem){
+  Widget createItemWidget(QsbkHotPicItem qsbkHotPicItem){
     return
       new GestureDetector(
         child: new Column(
@@ -18,12 +18,7 @@ class QsbkHotPicItemWidget{
                     _createThumbWidget(qsbkHotPicItem),
                     _createVoteCommentWidget(qsbkHotPicItem)
                   ]
-              ),
-        onTap:(){
-          Navigator.push(context, MaterialPageRoute(builder: (context){
-            return new HotPicJokeDetailPage(qsbkHotPicItem);
-          }));
-        }
+              )
       );
   }
 
@@ -56,6 +51,7 @@ class QsbkHotPicItemWidget{
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
+                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),)
@@ -75,6 +71,7 @@ class QsbkHotPicItemWidget{
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
+                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),)
@@ -104,7 +101,8 @@ class QsbkHotPicItemWidget{
                 style: TextStyle(
                     color: Colors.blueGrey,
                     fontSize: 16,
-                    fontStyle: FontStyle.italic
+                    fontStyle: FontStyle.italic,
+                    decoration: TextDecoration.none,
                 ),
               ),
             ),
@@ -153,7 +151,8 @@ class QsbkHotPicItemWidget{
               style: TextStyle(
                   color: Colors.blueGrey,
                   fontSize: 16,
-                  fontStyle: FontStyle.italic
+                  fontStyle: FontStyle.italic,
+                  decoration: TextDecoration.none
               )
           )
         ],

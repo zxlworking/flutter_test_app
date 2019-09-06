@@ -10,7 +10,7 @@ import 'dart:convert';
 
 import 'package:flutter_app/widget/QsbkHotPicItemWidget.dart';
 
-import 'day_word_page.dart';
+import 'DayWordPage.dart';
 
 void main() => runApp(new MyApp());
 
@@ -53,8 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     isLoadingQsbkHotPic = true;
     try {
-//      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
-      Response qsbkHotPicResponse = await Dio().get("http://10.234.199.73:9090/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+//      Response qsbkHotPicResponse = await Dio().get("http://10.234.199.73:9090/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
       QsbkHotPicItemList qsbkHotPicItemList = new QsbkHotPicItemList.fromJson(json.decode(qsbkHotPicResponse.data));
 
       print("page::$mQsbkHotPicPage::$isLoadingQsbkHotPic");
@@ -195,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 print("item::authorImgUrl = " + qsbkHotPicItem.authorImgUrl);
                 print("item::thumbImgUrl = " + qsbkHotPicItem.thumbImgUrl);
                 print(qsbkHotPicItem.authorNickName + "---" + qsbkHotPicItem.content);
-                return new QsbkHotPicItemWidget().createItemWidget(qsbkHotPicItem);
+                return new QsbkHotPicItemWidget().createItemWidget(context, qsbkHotPicItem);
               },
               separatorBuilder: (BuildContext context, int index) {
                 return new Container(height: 1.0, color: Colors.blue);
