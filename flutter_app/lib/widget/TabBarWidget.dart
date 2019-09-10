@@ -8,13 +8,13 @@ class TabBarWidget extends StatelessWidget {
 
     //定义tab页基本数据结构
     final List<TabItem> NewsTabs = <TabItem>[
-      new NewsTab('金融','financial'),
-      new NewsTab('科技','technology'),
-      new NewsTab('医疗','medical'),
+      new TabItem('金融','financial'),
+      new TabItem('科技','technology'),
+      new TabItem('医疗','medical'),
     ];
 
-    final NewsTab currentTab;
-    final ValueChanged<NewsTab> onSelectTab;  //这个参数比较关键，仔细理解下，省了setState()调用的环节
+    final TabBarWidget currentTab;
+    final ValueChanged<TabItem> onSelectTab;  //这个参数比较关键，仔细理解下，省了setState()调用的环节
 
     @override
     Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class TabBarWidget extends StatelessWidget {
     }
 
     //定义tab被选中和没被选中的颜色样式
-    Color _colorTabMatching({NewsTab item}) {
+    Color _colorTabMatching({TabItem item}) {
         return currentTab == item ? Colors.black : Colors.grey;
     }
 }

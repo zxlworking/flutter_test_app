@@ -1,5 +1,5 @@
-class TabDa {
+class TabItem {
   String text;
   String tab;
-  TabDa(this.text,this.tab);
+  TabItem(this.text,this.tab);
 }
