@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/widget/QsbkHotPicDetailWidget.dart';
 import 'package:flutter_app/widget/TabBarWidget.dart';
@@ -11,82 +12,176 @@ class HotPicJokeDetailPage extends StatelessWidget{
   QsbkHotPicItem mQsbkHotPicItem;
 
   HotPicJokeDetailPage(QsbkHotPicItem qsbkHotPicItem) {
-    print("DayWordPage()");
+    print("HotPicJokeDetailPage()");
     mQsbkHotPicItem = qsbkHotPicItem;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("tab title"),
-      ),
-      body: TabWidget(),
-//      body: CustomScrollView(
-//        slivers: <Widget>[
-//          SliverAppBar(
-//            flexibleSpace: FlexibleSpaceBar(title:Text("详情")),
-//          ),
-//          SliverList(
-//            delegate: new SliverChildListDelegate(
-//                <Widget>[
-//                  new QsbkHotPicDetailWidget().createItemWidget(mQsbkHotPicItem)
-//                ]
-//            ),
-//          ),
-//        ],
-//      ),
+    return TabWidget(mQsbkHotPicItem);
+  }
+}
+
+//https://www.jianshu.com/p/cefe49a0ab7f
+class TabWidget extends StatefulWidget {
+  QsbkHotPicItem mQsbkHotPicItem;
+
+  TabWidget(QsbkHotPicItem qsbkHotPicItem){
+    print("TabWidget()");
+    mQsbkHotPicItem = qsbkHotPicItem;
+  }
+
+  @override
+  State<StatefulWidget> createState() {
+    print("TabWidget()::createState");
+    return TabWidgetState(mQsbkHotPicItem);
+  }
+}
+
+class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixin {
+  TabController mController;
+  List<TabItem> tabList;
+
+  QsbkHotPicItem mQsbkHotPicItem;
+
+  TabWidgetState(QsbkHotPicItem qsbkHotPicItem){
+    print("TabWidgetState()");
+    mQsbkHotPicItem = qsbkHotPicItem;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("TabWidgetState()::initState");
+    initTabData();
+    mController = TabController(
+      length: tabList.length,
+      vsync: this,
     );
   }
 
-
-}
-
-class TabWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return TabWidgetState();
+  void dispose() {
+    super.dispose();
+    mController.dispose();
   }
-}
 
-class TabWidgetState extends State<TabWidget> {
-  TabWidgetState({this.currentTab, this.onSelectTab});
-
-  //定义tab页基本数据结构
-  final List<TabItem> NewsTabs = <TabItem>[
-    new TabItem('金融','financial'),
-    new TabItem('科技','technology'),
-    new TabItem('医疗','medical'),
-  ];
-
-  final TabBarWidget currentTab;
-  final ValueChanged<TabItem> onSelectTab;  //这个参数比较关键，仔细理解下，省了setState()调用的环节
+  initTabData() {
+    print("TabWidgetState()::initTabData");
+    tabList = [
+      new TabItem('内容', 0),
+      new TabItem('评论', 1),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-//    return Container(
-//      child: Text("tab test"),
-//    );
-    return Row(
-        children: NewsTabs.map((item){
-          return GestureDetector(    //手势监听控件，用于监听各种手势
-              child: Container(
-                padding: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
-                child: Text(item.text,style: TextStyle(color: _colorTabMatching(item: item)),),
-              ),
-              onTap: ()=>onSelectTab(item,)
-            //onSelectTab函数的使用非常巧妙，
-            //相当于定义了一个接口，可操控当前控件以外的数据
-          );
-        }).toList()
+    print("TabWidgetState()::build");
+    print("TabWidgetState()::build::mQsbkHotPicItem::${mQsbkHotPicItem.authorNickName}");
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("详情"),
+        backgroundColor: Colors.blue,
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.all_inclusive),
+        backgroundColor: Colors.blue,
+        elevation: 2.0,
+        highlightElevation: 2.0,
+        onPressed: () {},
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            color: new Color(0xfff4f5f6),
+            height: 38.0,
+            child: TabBar(
+              isScrollable: true,
+              //是否可以滚动
+              controller: mController,
+              labelColor: Colors.red,
+              unselectedLabelColor: Color(0xff666666),
+              labelStyle: TextStyle(fontSize: 16.0),
+              tabs: tabList.map((item) {
+                return Tab(
+                  text: item.title,
+                );
+              }).toList(),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: mController,
+              children: tabList.map((item) {
+//                return Stack(children: <Widget>[
+//                  Align(alignment:Alignment.topCenter,child: Text(item.title),),
+//                ],);
+                print("TabWidgetState()::TabBarView::index::${item.index}");
+                if(item.index == 0) {
+                  return ContentWidget(mQsbkHotPicItem);
+                } else if (item.index == 1) {
+                  return Stack(children: <Widget>[
+                    Align(alignment:Alignment.topCenter,child: Text(item.title),),
+                  ],);
+                }
+              }).toList(),
+            ),
+          )
+        ],
+      ),
     );
   }
+}
 
-  //定义tab被选中和没被选中的颜色样式
-  Color _colorTabMatching({TabItem item}) {
-    return currentTab == item ? Colors.black : Colors.grey;
+class ContentWidget extends StatefulWidget {
+  QsbkHotPicItem mQsbkHotPicItem;
+
+  ContentWidget(QsbkHotPicItem qsbkHotPicItem){
+    print("ContentWidget()");
+    mQsbkHotPicItem = qsbkHotPicItem;
   }
 
+  @override
+  ContentWidgetState createState() => ContentWidgetState(mQsbkHotPicItem);
+}
+
+class ContentWidgetState extends State<ContentWidget> {
+  bool isLoading = false;
+  
+  QsbkHotPicItem mQsbkHotPicItem;
+
+  ContentWidgetState(QsbkHotPicItem qsbkHotPicItem){
+    mQsbkHotPicItem = qsbkHotPicItem;
+  }
+  
+  void getQsbkHotPicDetail() async {
+    print("ContentWidget()::getQsbkHotPicDetail::isLoading::$isLoading");
+    if (isLoading) {
+      return;
+    }
+    isLoading = true;
+    try {
+      Response qsbkHotPicDetailResponse = await Dio().get(
+          "http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/detail?hot_pic_id=${mQsbkHotPicItem.id}");
+      print("getQsbkHotPicDetail::data::${qsbkHotPicDetailResponse.data}");
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("ContentWidget()::initState");
+    getQsbkHotPicDetail();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("ContentWidget()::build");
+    isLoading = false;
+    getQsbkHotPicDetail();
+    return Text("content");
+  }
+  
 }

@@ -1,5 +1,5 @@
 class TabItem {
-  String text;
-  String tab;
-  TabItem(this.text,this.tab);
+  String title;
+  int index;
+  TabItem(this.title,this.index);
 }

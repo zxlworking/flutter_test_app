@@ -8,9 +8,9 @@ class TabBarWidget extends StatelessWidget {
 
     //定义tab页基本数据结构
     final List<TabItem> NewsTabs = <TabItem>[
-      new TabItem('金融','financial'),
-      new TabItem('科技','technology'),
-      new TabItem('医疗','medical'),
+//      new TabItem('金融','financial'),
+//      new TabItem('科技','technology'),
+//      new TabItem('医疗','medical'),
     ];
 
     final TabBarWidget currentTab;
@@ -23,7 +23,7 @@ class TabBarWidget extends StatelessWidget {
         return GestureDetector(    //手势监听控件，用于监听各种手势
                 child: Container(
                 padding: EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
-                child: Text(item.text,style: TextStyle(color: _colorTabMatching(item: item)),),
+                child: Text(item.title,style: TextStyle(color: _colorTabMatching(item: item)),),
           ),
         onTap: ()=>onSelectTab(item,)
         //onSelectTab函数的使用非常巧妙，
