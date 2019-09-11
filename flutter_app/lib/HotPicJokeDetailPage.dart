@@ -9,6 +9,7 @@ import 'mode/TabItem.dart';
 class HotPicJokeDetailPage extends StatelessWidget{
 
   //http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/detail?hot_pic_id=199
+  //https://blog.csdn.net/qq_39969226/article/details/97247140---content provider
   QsbkHotPicItem mQsbkHotPicItem;
 
   HotPicJokeDetailPage(QsbkHotPicItem qsbkHotPicItem) {
