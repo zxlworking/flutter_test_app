@@ -63,7 +63,7 @@ class MainAppState extends State<MainAppWidget> {
     print("getMovieInfoList::start");
     try {
       Response response = await Dio().get(
-          "http://10.234.199.73:9090/test/maoyan/movie_list?page=${page_index}&page_size=${page_size}&movie_type=1");
+          "http://zxltest.zicp.vip:36619/test/maoyan/movie_list?page=${page_index}&page_size=${page_size}&movie_type=1");
       MovieInfoList tempMovieInfoList = new MovieInfoList.fromJson(
           json.decode(response.data));
 
@@ -149,7 +149,7 @@ class MainAppState extends State<MainAppWidget> {
           child: mMovieInfoList == null ?
           Text("Loading...", style: TextStyle(color: Colors.blue))
               :
-          ListView.separated(
+          /*ListView.separated(
               itemBuilder: (BuildContext context, int index) {
                 if (index == mMovieInfoList.movieInfoList.length - 1) {
                   getMovieInfoList();
@@ -168,6 +168,25 @@ class MainAppState extends State<MainAppWidget> {
               },
               separatorBuilder: (BuildContext context, int index) {
                 return new Container(height: 1, color: Colors.blue,);
+              },
+              itemCount: mMovieInfoList.movieInfoList.length)*/
+          GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7),
+              itemBuilder: (BuildContext context, int index) {
+                if (index == mMovieInfoList.movieInfoList.length - 1) {
+                  getMovieInfoList();
+                }
+
+                print("item::index = " + "$index");
+                print("item::movieTitle = " + mMovieInfoList.movieInfoList.elementAt(index).movieTitle);
+                print("item::moviePosterUrl = " + mMovieInfoList.movieInfoList.elementAt(index).moviePosterUrl);
+
+                return new Column(
+                  children: <Widget>[
+                    Image.network(mMovieInfoList.movieInfoList.elementAt(index).moviePosterUrl, fit: BoxFit.fitHeight,),
+                    Text(mMovieInfoList.movieInfoList.elementAt(index).movieTitle),
+                  ],
+                );
               },
               itemCount: mMovieInfoList.movieInfoList.length)
       ),
