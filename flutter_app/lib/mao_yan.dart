@@ -149,29 +149,15 @@ class MainAppState extends State<MainAppWidget> {
           child: mMovieInfoList == null ?
           Text("Loading...", style: TextStyle(color: Colors.blue))
               :
-          /*ListView.separated(
-              itemBuilder: (BuildContext context, int index) {
-                if (index == mMovieInfoList.movieInfoList.length - 1) {
-                  getMovieInfoList();
-                }
-
-                print("item::index = " + "$index");
-                print("item::movieTitle = " + mMovieInfoList.movieInfoList.elementAt(index).movieTitle);
-                print("item::moviePosterUrl = " + mMovieInfoList.movieInfoList.elementAt(index).moviePosterUrl);
-
-                return new Column(
-                  children: <Widget>[
-                    Image.network(mMovieInfoList.movieInfoList.elementAt(index).moviePosterUrl, fit: BoxFit.fitHeight,),
-                    Text(mMovieInfoList.movieInfoList.elementAt(index).movieTitle),
-                  ],
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return new Container(height: 1, color: Colors.blue,);
-              },
-              itemCount: mMovieInfoList.movieInfoList.length)*/
           GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7),
+              padding: EdgeInsets.all(10.0),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.6,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10
+              ),
+
               itemBuilder: (BuildContext context, int index) {
                 if (index == mMovieInfoList.movieInfoList.length - 1) {
                   getMovieInfoList();
@@ -181,9 +167,19 @@ class MainAppState extends State<MainAppWidget> {
                 print("item::movieTitle = " + mMovieInfoList.movieInfoList.elementAt(index).movieTitle);
                 print("item::moviePosterUrl = " + mMovieInfoList.movieInfoList.elementAt(index).moviePosterUrl);
 
+                var itemWidth = (MediaQuery.of(context).size.width - 10 * 3) / 2;
+                var itemHeight = itemWidth / 0.65;
+                print("item::itemWidth = " + "$itemWidth");
+                print("item::itemHeight = " + "$itemHeight");
+
                 return new Column(
                   children: <Widget>[
-                    Image.network(mMovieInfoList.movieInfoList.elementAt(index).moviePosterUrl, fit: BoxFit.fitHeight,),
+                    Image.network(
+                      mMovieInfoList.movieInfoList.elementAt(index).moviePosterUrl,
+                      fit: BoxFit.fill,
+                      width: itemWidth,
+                      height: itemHeight,
+                    ),
                     Text(mMovieInfoList.movieInfoList.elementAt(index).movieTitle),
                   ],
                 );
