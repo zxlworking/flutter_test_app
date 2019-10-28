@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/widget/QsbkHotPicDetailWidget.dart';
-import 'package:flutter_app/widget/TabBarWidget.dart';
 
 import 'mode/QsbkHotPicItem.dart';
 import 'mode/TabItem.dart';

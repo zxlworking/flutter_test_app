@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: ''),
@@ -48,36 +47,38 @@ class _MyHomePageState extends State<MyHomePage> {
   DayWord mDayWord;
 
   void getQsbkHotPic() async {
-    if(isLoadingQsbkHotPic){
+    if (isLoadingQsbkHotPic) {
       return;
     }
     isLoadingQsbkHotPic = true;
     try {
-      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+      Response qsbkHotPicResponse = await Dio().get(
+          "http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
 //      Response qsbkHotPicResponse = await Dio().get("http://10.234.199.73:9090/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
-      QsbkHotPicItemList qsbkHotPicItemList = new QsbkHotPicItemList.fromJson(json.decode(qsbkHotPicResponse.data));
+      QsbkHotPicItemList qsbkHotPicItemList =
+          new QsbkHotPicItemList.fromJson(json.decode(qsbkHotPicResponse.data));
 
       print("page::$mQsbkHotPicPage::$isLoadingQsbkHotPic");
 
-      if(qsbkHotPicItemList == null){
+      if (qsbkHotPicItemList == null) {
         print("mQsbkHotPicItemList::is null");
         isLoadingQsbkHotPic = false;
         return;
       }
-      if(qsbkHotPicItemList.itemList == null){
+      if (qsbkHotPicItemList.itemList == null) {
         print("mQsbkHotPicItemList.itemList::is null");
         isLoadingQsbkHotPic = false;
         return;
       }
-      if(qsbkHotPicItemList.itemList.isEmpty == null){
+      if (qsbkHotPicItemList.itemList.isEmpty == null) {
         print("mQsbkHotPicItemList.itemList::is isEmpty");
         isLoadingQsbkHotPic = false;
         return;
       }
 
-      if(mQsbkHotPicItemList == null){
+      if (mQsbkHotPicItemList == null) {
         mQsbkHotPicItemList = qsbkHotPicItemList;
-      }else{
+      } else {
         mQsbkHotPicItemList.itemList.addAll(qsbkHotPicItemList.itemList);
       }
 
@@ -85,8 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
         print("item::${item.authorNickName}");
       });*/
 
-      setState(() {
-      });
+      setState(() {});
 
       isLoadingQsbkHotPic = false;
       mQsbkHotPicPage++;
@@ -98,20 +98,19 @@ class _MyHomePageState extends State<MyHomePage> {
   void getDayWOrd() async {
     try {
       DateTime now = DateTime.now();
-      Response dayWordResponse = await Dio().get("http://open.iciba.com/dsapi/?date=${now.year}-${now.month}-${now.day}");
+      Response dayWordResponse = await Dio().get(
+          "http://open.iciba.com/dsapi/?date=${now.year}-${now.month}-${now.day}");
       mDayWord = new DayWord.fromJson(json.decode(dayWordResponse.data));
 
-      setState(() {
-
-      });
+      setState(() {});
     } catch (e) {
       print(e);
     }
   }
 
-  void clickTitle(DayWord dayWord){
+  void clickTitle(DayWord dayWord) {
     print("clickTitle");
-    Navigator.push(context, MaterialPageRoute(builder: (context){
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
       return new DayWordPage(mDayWord);
     }));
 //    Navigator.push(
@@ -132,76 +131,73 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: mDayWord == null ?
-            Text(
-                widget.title
-            )
-            :
-            GestureDetector(
-              child: MarqueeWidget(
-                  Container(
-                    width: window.physicalSize.width / 2,
+        appBar: AppBar(
+            title: mDayWord == null
+                ? Text(widget.title)
+                : GestureDetector(
+                    child: MarqueeWidget(
+                        Container(
+                          width: window.physicalSize.width / 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "${mDayWord.content}",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              Text(
+                                "${mDayWord.note}",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          alignment: Alignment.centerLeft,
+                        ),
+                        0.0,
+                        new Duration(seconds: 5),
+                        230.0),
+                    onTap: () {
+                      clickTitle(mDayWord);
+                    },
+                  )),
+        body: Center(
+            child: mQsbkHotPicItemList == null
+                ? Center(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "${mDayWord.content}",
-                          style: TextStyle(
-                              fontSize: 14
-                          ),
-                        ),
-                        Text(
-                          "${mDayWord.note}",
-                          style: TextStyle(
-                              fontSize: 12
-                          ),
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.centerLeft,
-                  ),
-                  0.0,
-                  new Duration(seconds: 5),
-                  230.0
-              ),
-              onTap: (){clickTitle(mDayWord);},
-            )
-      ),
-      body: Center(
-        child :
-          mQsbkHotPicItemList == null ?
-          Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  new MaterialButton(
-                    child: Text('loading...',style: TextStyle(color: Colors.blue),)
-                  ),
-                ],
-              )
-          )
-              :
-          ListView.separated(
-              itemBuilder: (BuildContext context, int index) {
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new MaterialButton(
+                          child: Text(
+                        'loading...',
+                        style: TextStyle(color: Colors.blue),
+                      )),
+                    ],
+                  ))
+                : ListView.separated(
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == mQsbkHotPicItemList.itemList.length - 1) {
+                        getQsbkHotPic();
+                      }
 
-                if(index == mQsbkHotPicItemList.itemList.length - 1){
-                  getQsbkHotPic();
-                }
-
-                QsbkHotPicItem qsbkHotPicItem = mQsbkHotPicItemList.itemList.elementAt(index);
-                print("item::index = " + "$index");
-                print("item::authorImgUrl = " + qsbkHotPicItem.authorImgUrl);
-                print("item::thumbImgUrl = " + qsbkHotPicItem.thumbImgUrl);
-                print(qsbkHotPicItem.authorNickName + "---" + qsbkHotPicItem.content);
-                return new QsbkHotPicItemWidget().createItemWidget(context, qsbkHotPicItem);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return new Container(height: 1.0, color: Colors.blue);
-              },
-              itemCount: mQsbkHotPicItemList.itemList.length)
-      ) // This trailing comma makes auto-formatting nicer for build methods.
-    );
+                      QsbkHotPicItem qsbkHotPicItem =
+                          mQsbkHotPicItemList.itemList.elementAt(index);
+                      print("item::index = " + "$index");
+                      print("item::authorImgUrl = " +
+                          qsbkHotPicItem.authorImgUrl);
+                      print(
+                          "item::thumbImgUrl = " + qsbkHotPicItem.thumbImgUrl);
+                      print(qsbkHotPicItem.authorNickName +
+                          "---" +
+                          qsbkHotPicItem.content);
+                      return new QsbkHotPicItemWidget()
+                          .createItemWidget(context, qsbkHotPicItem);
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return new Container(height: 1.0, color: Colors.blue);
+                    },
+                    itemCount: mQsbkHotPicItemList.itemList
+                        .length)) // This trailing comma makes auto-formatting nicer for build methods.
+        );
   }
 }
