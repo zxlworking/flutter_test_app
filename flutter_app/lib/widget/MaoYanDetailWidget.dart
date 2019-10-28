@@ -92,6 +92,7 @@ class MaoYanDetailWidgetState extends State<MaoYanDetailWidget> {
                                 ),
                                 Container(
                                   width: itemWidth,
+                                  height: itemHeight,
                                   padding: EdgeInsets.fromLTRB(10, 20, 0, 10),
                                   child: Column(
                                     children: <Widget>[
@@ -99,11 +100,11 @@ class MaoYanDetailWidgetState extends State<MaoYanDetailWidget> {
                                         children: <Widget>[
                                           Text(
                                             movieDetailInfo.movieName,
-                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 30, fontStyle: FontStyle.italic),
+                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 20, fontStyle: FontStyle.italic),
                                           ),
                                           Text(
                                             movieDetailInfo.movieEnName,
-                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 20, fontStyle: FontStyle.italic),
+                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 15, fontStyle: FontStyle.italic),
                                           ),
                                           Container(
                                             margin: EdgeInsets.fromLTRB(0, 10, 0, 20),
@@ -111,30 +112,30 @@ class MaoYanDetailWidgetState extends State<MaoYanDetailWidget> {
                                               children: <Widget>[
                                                 Text(
                                                   movieDetailInfo.movieDuration,
-                                                  style: TextStyle(decoration: TextDecoration.none, fontSize: 15),
+                                                  style: TextStyle(decoration: TextDecoration.none, fontSize: 12),
                                                 ),
                                                 Text(
                                                   movieDetailInfo.movieCategory,
-                                                  style: TextStyle(decoration: TextDecoration.none, fontSize: 15),
+                                                  style: TextStyle(decoration: TextDecoration.none, fontSize: 12),
                                                 ),
                                                 Text(
                                                   movieDetailInfo.movieReleaseInfo,
-                                                  style: TextStyle(decoration: TextDecoration.none, fontSize: 15),
+                                                  style: TextStyle(decoration: TextDecoration.none, fontSize: 12),
                                                 ),
                                               ],
                                             ),
                                           ),
                                           Text(
                                             movieDetailInfo.movieScoreContent,
-                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 25, color: Colors.orange),
+                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 15, color: Colors.orange),
                                           ),
                                           Text(
                                             movieDetailInfo.movieBoxValueContent + movieDetailInfo.movieBoxUnitContent,
-                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 25, color: Colors.lightGreen),
+                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 15, color: Colors.lightGreen),
                                           ),
                                           Text(
                                             (movieDetailInfo.movieStatsPeopleCountContent + movieDetailInfo.movieStatsPeopleCountUnitContent).length == 0 ? ((movieDetailInfo.movieStatsPeopleCountContent + movieDetailInfo.movieStatsPeopleCountUnitContent)) : ((movieDetailInfo.movieStatsPeopleCountContent + movieDetailInfo.movieStatsPeopleCountUnitContent) + "人评论"),
-                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 25, color: Colors.blue),
+                                            style: TextStyle(decoration: TextDecoration.none, fontSize: 15, color: Colors.blue),
                                           ),
                                         ],
                                       ),
@@ -147,7 +148,7 @@ class MaoYanDetailWidgetState extends State<MaoYanDetailWidget> {
                               margin: EdgeInsets.fromLTRB(0, 15, 0, 10),
                               child: Text(
                                 movieDetailInfo.introduceContent,
-                                style: TextStyle(decoration: TextDecoration.none, fontSize: 20, color: Colors.blueGrey),
+                                style: TextStyle(decoration: TextDecoration.none, fontSize: 15, color: Colors.blueGrey),
                               ),
                             ),
                           ],)
