@@ -1,37 +1,55 @@
-
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/mode/QsbkHotPicItem.dart';
-import 'package:flutter_app/mode/QsbkHotPicItemList.dart';
-import 'package:flutter_app/widget/BaseTabItemWidget.dart';
+import 'package:flutter_app/mode/DayWord.dart';
+import 'package:flutter_app/mode/QsbkItem.dart';
+import 'package:flutter_app/mode/QsbkList.dart';
 
-import 'QsbkHotPicItemWidget.dart';
+import '../DayWordPage.dart';
+import 'MarqueeWidget.dart';
+import 'JokeItemWidget.dart';
 
-class JokeWidget extends BaseTabItemWidget {
-  JokeWidget(int index, String title) : super(index, title);
-
-  State<StatefulWidget> customState() {
-    return JokeWidgetState();
+class JokeWidget {
+  Widget createWidget(BuildContext context, int jokeType){
+    print("createItemWidget()::$jokeType");
+    return new _InnerWidget(mJokeType: jokeType,);
   }
 }
 
-class JokeWidgetState extends State {
+class _InnerWidget extends StatefulWidget {
+  var mJokeType;
+  _InnerWidget({Key key, this.mJokeType}) : super(key : key);
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    print("createState()::$mJokeType");
+    return new _InnerWidgetState();
+  }
+}
+
+class _InnerWidgetState extends State<_InnerWidget> {
   var isLoadingQsbkHotPic = false;
   var mQsbkHotPicPageSize = 10;
   var mQsbkHotPicPage = 0;
-
+  var mJokeType = 0;
   QsbkHotPicItemList mQsbkHotPicItemList;
 
+
   void getQsbkHotPic() async {
+    mJokeType = widget.mJokeType;
+    print("getQsbkHotPic::isLoadingQsbkHotPic = $isLoadingQsbkHotPic");
+    print("getQsbkHotPic::jokeType = $mJokeType");
     if(isLoadingQsbkHotPic){
       return;
     }
     isLoadingQsbkHotPic = true;
     try {
-      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
-//      Response qsbkHotPicResponse = await Dio().get("http://10.234.199.73:9090/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+//      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
+      Response qsbkHotPicResponse = await Dio().get("http://10.241.143.218:9090/test/qsbk/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize&joke_type=$mJokeType");
       QsbkHotPicItemList qsbkHotPicItemList = new QsbkHotPicItemList.fromJson(json.decode(qsbkHotPicResponse.data));
 
       print("page::$mQsbkHotPicPage::$isLoadingQsbkHotPic");
@@ -79,10 +97,8 @@ class JokeWidgetState extends State {
     getQsbkHotPic();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Center(
         child :
         mQsbkHotPicItemList == null ?
@@ -109,7 +125,7 @@ class JokeWidgetState extends State {
               print("item::authorImgUrl = " + qsbkHotPicItem.authorImgUrl);
               print("item::thumbImgUrl = " + qsbkHotPicItem.thumbImgUrl);
               print(qsbkHotPicItem.authorNickName + "---" + qsbkHotPicItem.content);
-              return new QsbkHotPicItemWidget().createItemWidget(context, qsbkHotPicItem);
+              return new JokeItemWidget().createItemWidget(context, qsbkHotPicItem);
             },
             separatorBuilder: (BuildContext context, int index) {
               return new Container(height: 1.0, color: Colors.blue);
@@ -117,5 +133,4 @@ class JokeWidgetState extends State {
             itemCount: mQsbkHotPicItemList.itemList.length)
     );
   }
-
 }

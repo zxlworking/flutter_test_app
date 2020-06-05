@@ -34,7 +34,7 @@ class TabWidgetState extends State<TabWidget> with AutomaticKeepAliveClientMixin
 
   List<BaseTabItemWidget> mTabList = [
     MaoYanWidget(0, "电影"),
-    JokeWidget(1, "笑话"),
+    //JokeWidget(1, "笑话"),
     BaseTabItemWidget(2, "tab 2"),
   ];
 

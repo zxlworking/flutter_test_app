@@ -27,7 +27,6 @@ class MaoYanDetailTabWidgetState extends State<MaoYanDetailTabWidget>
     // TODO: implement initState
     super.initState();
     mTabList = [
-      MaoYanDetailWidget(0, "详情", widget.mMovieId),
       BaseTabItemWidget(1, "tab 1"),
       BaseTabItemWidget(2, "tab 2"),
     ];

@@ -1,30 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/mode/QsbkHotPicItem.dart';
+import 'package:flutter_app/mode/QsbkDetail.dart';
+import 'package:flutter_app/mode/QsbkItem.dart';
+import 'package:flutter_app/widget/JokeDetailPage.dart';
 
-import '../HotPicJokeDetailPage.dart';
+class JokeDetailContentWidget {
 
-class QsbkHotPicDetailWidget{
+  static const String GENDER_WOMEN = "0";
+  static const String GENDER_MEN = "1";
 
-  static const String GENDER_WOMEN = "articleGender womenIcon";
-  static const String GENDER_MEN = "articleGender manIcon";
-
-  Widget createItemWidget(QsbkHotPicItem qsbkHotPicItem){
+  Widget createItemWidget(BuildContext context, QsbkHotPicItem qsbkHotPicItem, QsbkDetail qsbkDetail){
     return
       new GestureDetector(
         child: new Column(
                   children: <Widget>[
                     _createAuthorInfoWidget(qsbkHotPicItem),
-                    _createContentWidget(qsbkHotPicItem),
-                    _createThumbWidget(qsbkHotPicItem),
-                    _createVoteCommentWidget(qsbkHotPicItem)
+                    _createContentWidget(qsbkDetail),
+                    _createThumbWidget(qsbkDetail)
                   ]
-              )
+              ),
+        onTap:(){
+          Navigator.push(context, MaterialPageRoute(builder: (context){
+            return new JokeDetailPage(qsbkHotPicItem);
+          }));
+        }
       );
   }
 
   Widget _createAuthorInfoWidget(QsbkHotPicItem qsbkHotPicItem){
     print("_createAuthorInfoWidget::${qsbkHotPicItem.authorGender}::${qsbkHotPicItem.authorAge}");
-    String gender = qsbkHotPicItem.authorGender == GENDER_WOMEN ? "女" : "男";
+
+    String gender = '未知';
+    if (qsbkHotPicItem.authorGender == GENDER_WOMEN) {
+      gender = "女";
+    } else if (qsbkHotPicItem.authorGender == GENDER_MEN) {
+      gender = "男";
+    }
     return Container(
       margin: EdgeInsets.all(8),
       color: Colors.blueGrey,
@@ -51,7 +61,6 @@ class QsbkHotPicDetailWidget{
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
-                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),)
@@ -71,7 +80,6 @@ class QsbkHotPicDetailWidget{
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
-                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),)
@@ -86,7 +94,7 @@ class QsbkHotPicDetailWidget{
     );
   }
 
-  Widget _createContentWidget(QsbkHotPicItem qsbkHotPicItem){
+  Widget _createContentWidget(QsbkDetail qsbkDetail){
     return new Row(
         children:<Widget>[
           Expanded(
@@ -95,14 +103,13 @@ class QsbkHotPicDetailWidget{
               padding: EdgeInsets.only(left: 8,right: 8),
               color: Colors.lime,
               child: Text(
-                "${qsbkHotPicItem.content}",
+                "${qsbkDetail.content}",
                 softWrap: true,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                     color: Colors.blueGrey,
                     fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    decoration: TextDecoration.none,
+                    fontStyle: FontStyle.italic
                 ),
               ),
             ),
@@ -111,8 +118,8 @@ class QsbkHotPicDetailWidget{
     );
   }
 
-  Widget _createThumbWidget(QsbkHotPicItem qsbkHotPicItem){
-    if(qsbkHotPicItem.thumbImgUrl == null || qsbkHotPicItem.thumbImgUrl.isEmpty) {
+  Widget _createThumbWidget(QsbkDetail qsbkDetail){
+    if(qsbkDetail.thumbImgUrl == null || qsbkDetail.thumbImgUrl.isEmpty) {
       return Container();
     }
     return Padding(
@@ -123,39 +130,11 @@ class QsbkHotPicDetailWidget{
           child: Column(
             children: <Widget>[
               Image.network(
-                qsbkHotPicItem.thumbImgUrl,fit:BoxFit.fitHeight,
+                qsbkDetail.thumbImgUrl,fit:BoxFit.fitHeight,
               )
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _createVoteCommentWidget(QsbkHotPicItem qsbkHotPicItem){
-    String intervalStr = "";
-    if((qsbkHotPicItem.statsVoteContent != null && qsbkHotPicItem.statsVoteContent.isNotEmpty) &&
-        (qsbkHotPicItem.statsCommentContent != null && qsbkHotPicItem.statsCommentContent.isNotEmpty)){
-      intervalStr = " · ";
-    }
-    return Container(
-      margin: EdgeInsets.fromLTRB(10,0,8,4),
-      color: Colors.white70,
-      child: Row(
-        children: <Widget>[
-          Text(
-            //487 好笑 · 18 评论
-            "${qsbkHotPicItem.statsVoteContent}" + intervalStr + "${qsbkHotPicItem.statsCommentContent}",
-              softWrap: true,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                  decoration: TextDecoration.none
-              )
-          )
-        ],
       ),
     );
   }

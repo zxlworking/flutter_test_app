@@ -1,52 +1,42 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/mode/QsbkDetail.dart';
+import 'package:flutter_app/mode/QsbkItem.dart';
+import 'package:flutter_app/mode/TabItem.dart';
+import 'package:flutter_app/widget/JokeDetailContentWidget.dart';
 
-import 'mode/QsbkHotPicItem.dart';
-import 'mode/TabItem.dart';
 
-class HotPicJokeDetailPage extends StatelessWidget{
+class JokeDetailPage extends StatelessWidget{
 
   //http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/detail?hot_pic_id=199
   //https://blog.csdn.net/qq_39969226/article/details/97247140---content provider
   QsbkHotPicItem mQsbkHotPicItem;
 
-  HotPicJokeDetailPage(QsbkHotPicItem qsbkHotPicItem) {
-    print("HotPicJokeDetailPage()");
-    mQsbkHotPicItem = qsbkHotPicItem;
-  }
+  JokeDetailPage(this.mQsbkHotPicItem);
 
   @override
   Widget build(BuildContext context) {
-    return TabWidget(mQsbkHotPicItem);
+    return TabWidget(mQsbkHotPicItem: this.mQsbkHotPicItem);
   }
 }
 
 //https://www.jianshu.com/p/cefe49a0ab7f
 class TabWidget extends StatefulWidget {
   QsbkHotPicItem mQsbkHotPicItem;
-
-  TabWidget(QsbkHotPicItem qsbkHotPicItem){
-    print("TabWidget()");
-    mQsbkHotPicItem = qsbkHotPicItem;
-  }
+  TabWidget({Key key, this.mQsbkHotPicItem}) : super(key : key);
 
   @override
   State<StatefulWidget> createState() {
     print("TabWidget()::createState");
-    return TabWidgetState(mQsbkHotPicItem);
+    return TabWidgetState();
   }
 }
 
 class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixin {
   TabController mController;
   List<TabItem> tabList;
-
-  QsbkHotPicItem mQsbkHotPicItem;
-
-  TabWidgetState(QsbkHotPicItem qsbkHotPicItem){
-    print("TabWidgetState()");
-    mQsbkHotPicItem = qsbkHotPicItem;
-  }
 
   @override
   void initState() {
@@ -76,7 +66,7 @@ class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixi
   @override
   Widget build(BuildContext context) {
     print("TabWidgetState()::build");
-    print("TabWidgetState()::build::mQsbkHotPicItem::${mQsbkHotPicItem.authorNickName}");
+    print("TabWidgetState()::build::mQsbkHotPicItem::${widget.mQsbkHotPicItem.authorNickName}");
     return Scaffold(
       appBar: AppBar(
         title: Text("详情"),
@@ -117,7 +107,7 @@ class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixi
 //                ],);
                 print("TabWidgetState()::TabBarView::index::${item.index}");
                 if(item.index == 0) {
-                  return ContentWidget(mQsbkHotPicItem);
+                  return ContentWidget(mQsbkHotPicItem: widget.mQsbkHotPicItem);
                 } else if (item.index == 1) {
                   return Stack(children: <Widget>[
                     Align(alignment:Alignment.topCenter,child: Text(item.title),),
@@ -134,24 +124,16 @@ class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixi
 
 class ContentWidget extends StatefulWidget {
   QsbkHotPicItem mQsbkHotPicItem;
-
-  ContentWidget(QsbkHotPicItem qsbkHotPicItem){
-    print("ContentWidget()");
-    mQsbkHotPicItem = qsbkHotPicItem;
-  }
+  ContentWidget({Key key, this.mQsbkHotPicItem}) : super(key : key);
 
   @override
-  ContentWidgetState createState() => ContentWidgetState(mQsbkHotPicItem);
+  ContentWidgetState createState() => ContentWidgetState();
 }
 
 class ContentWidgetState extends State<ContentWidget> {
   bool isLoading = false;
-  
-  QsbkHotPicItem mQsbkHotPicItem;
 
-  ContentWidgetState(QsbkHotPicItem qsbkHotPicItem){
-    mQsbkHotPicItem = qsbkHotPicItem;
-  }
+  QsbkDetail mQsbkDetail;
   
   void getQsbkHotPicDetail() async {
     print("ContentWidget()::getQsbkHotPicDetail::isLoading::$isLoading");
@@ -161,10 +143,16 @@ class ContentWidgetState extends State<ContentWidget> {
     isLoading = true;
     try {
       Response qsbkHotPicDetailResponse = await Dio().get(
-          "http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/detail?hot_pic_id=${mQsbkHotPicItem.id}");
+          "http://10.241.143.218:9090/test/qsbk/detail?joke_id=${widget.mQsbkHotPicItem.id}");
       print("getQsbkHotPicDetail::data::${qsbkHotPicDetailResponse.data}");
+      mQsbkDetail = new QsbkDetail.fromJson(json.decode(qsbkHotPicDetailResponse.data));
+      isLoading = false;
+      setState(() {
+
+      });
     } catch (e) {
       print(e);
+      isLoading = false;
     }
   }
 
@@ -178,9 +166,7 @@ class ContentWidgetState extends State<ContentWidget> {
   @override
   Widget build(BuildContext context) {
     print("ContentWidget()::build");
-    isLoading = false;
-    getQsbkHotPicDetail();
-    return Text("content");
+    return new JokeDetailContentWidget().createItemWidget(context, widget.mQsbkHotPicItem, mQsbkDetail);
   }
   
 }

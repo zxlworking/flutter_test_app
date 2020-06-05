@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/mode/QsbkHotPicItem.dart';
+import 'package:flutter_app/mode/QsbkItem.dart';
 
-import '../HotPicJokeDetailPage.dart';
+import 'package:flutter_app/widget/JokeDetailPage.dart';
 
-class QsbkHotPicItemWidget{
+class JokeItemWidget{
 
-  static const String GENDER_WOMEN = "articleGender womenIcon";
-  static const String GENDER_MEN = "articleGender manIcon";
+  static const String GENDER_WOMEN = "0";
+  static const String GENDER_MEN = "1";
 
   Widget createItemWidget(BuildContext context, QsbkHotPicItem qsbkHotPicItem){
     return
@@ -21,7 +21,7 @@ class QsbkHotPicItemWidget{
               ),
         onTap:(){
           Navigator.push(context, MaterialPageRoute(builder: (context){
-            return new HotPicJokeDetailPage(qsbkHotPicItem);
+            return new JokeDetailPage(qsbkHotPicItem);
           }));
         }
       );
@@ -29,7 +29,14 @@ class QsbkHotPicItemWidget{
 
   Widget _createAuthorInfoWidget(QsbkHotPicItem qsbkHotPicItem){
     print("_createAuthorInfoWidget::${qsbkHotPicItem.authorGender}::${qsbkHotPicItem.authorAge}");
-    String gender = qsbkHotPicItem.authorGender == GENDER_WOMEN ? "女" : "男";
+
+    String gender = '未知';
+    if (qsbkHotPicItem.authorGender == GENDER_WOMEN) {
+      gender = "女";
+    } else if (qsbkHotPicItem.authorGender == GENDER_MEN) {
+      gender = "男";
+    }
+
     return Container(
       margin: EdgeInsets.all(8),
       color: Colors.blueGrey,
