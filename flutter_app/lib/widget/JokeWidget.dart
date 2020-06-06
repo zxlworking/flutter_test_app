@@ -36,10 +36,10 @@ class _InnerWidgetState extends State<_InnerWidget> {
   var mQsbkHotPicPageSize = 10;
   var mQsbkHotPicPage = 0;
   var mJokeType = 0;
-  QsbkHotPicItemList mQsbkHotPicItemList;
+  QsbkList mQsbkList;
 
 
-  void getQsbkHotPic() async {
+  void getQsbkHotPic(String lastId) async {
     mJokeType = widget.mJokeType;
     print("getQsbkHotPic::isLoadingQsbkHotPic = $isLoadingQsbkHotPic");
     print("getQsbkHotPic::jokeType = $mJokeType");
@@ -48,32 +48,40 @@ class _InnerWidgetState extends State<_InnerWidget> {
     }
     isLoadingQsbkHotPic = true;
     try {
-//      Response qsbkHotPicResponse = await Dio().get("http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize");
-      Response qsbkHotPicResponse = await Dio().get("http://10.241.143.218:9090/test/qsbk/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize&joke_type=$mJokeType");
-      QsbkHotPicItemList qsbkHotPicItemList = new QsbkHotPicItemList.fromJson(json.decode(qsbkHotPicResponse.data));
+      String url = "http://zxltest.zicp.vip:51763/";
+//      String url = "http://192.168.31.63:9090/";
+      if (lastId.isEmpty) {
+//        url = url + "test/qsbk/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize&joke_type=$mJokeType";
+        url = url + "test/qsbk/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize&joke_type=$mJokeType";
+      } else {
+//        url = url + "test/qsbk/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize&last_id=$lastId&joke_type=$mJokeType";
+        url =  url + "test/qsbk/list?page=$mQsbkHotPicPage&page_size=$mQsbkHotPicPageSize&last_id=$lastId&joke_type=$mJokeType";
+      }
+      Response qsbkHotPicResponse = await Dio().get(url);
+      QsbkList qsbkList = new QsbkList.fromJson(json.decode(qsbkHotPicResponse.data));
 
       print("page::$mQsbkHotPicPage::$isLoadingQsbkHotPic");
 
-      if(qsbkHotPicItemList == null){
+      if(qsbkList == null){
         print("mQsbkHotPicItemList::is null");
         isLoadingQsbkHotPic = false;
         return;
       }
-      if(qsbkHotPicItemList.itemList == null){
+      if(qsbkList.itemList == null){
         print("mQsbkHotPicItemList.itemList::is null");
         isLoadingQsbkHotPic = false;
         return;
       }
-      if(qsbkHotPicItemList.itemList.isEmpty == null){
+      if(qsbkList.itemList.isEmpty == null){
         print("mQsbkHotPicItemList.itemList::is isEmpty");
         isLoadingQsbkHotPic = false;
         return;
       }
 
-      if(mQsbkHotPicItemList == null){
-        mQsbkHotPicItemList = qsbkHotPicItemList;
+      if(mQsbkList == null){
+        mQsbkList = qsbkList;
       }else{
-        mQsbkHotPicItemList.itemList.addAll(qsbkHotPicItemList.itemList);
+        mQsbkList.itemList.addAll(qsbkList.itemList);
       }
 
       /*mQsbkHotPicItemList.itemList.forEach((item){
@@ -94,14 +102,14 @@ class _InnerWidgetState extends State<_InnerWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getQsbkHotPic();
+    getQsbkHotPic("");
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
         child :
-        mQsbkHotPicItemList == null ?
+        mQsbkList == null ?
         Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -116,21 +124,22 @@ class _InnerWidgetState extends State<_InnerWidget> {
         ListView.separated(
             itemBuilder: (BuildContext context, int index) {
 
-              if(index == mQsbkHotPicItemList.itemList.length - 1){
-                getQsbkHotPic();
+              QsbkItem qsbkItem = mQsbkList.itemList.elementAt(index);
+
+              if(index == mQsbkList.itemList.length - 1){
+                getQsbkHotPic(qsbkItem.id);
               }
 
-              QsbkHotPicItem qsbkHotPicItem = mQsbkHotPicItemList.itemList.elementAt(index);
               print("item::index = " + "$index");
-              print("item::authorImgUrl = " + qsbkHotPicItem.authorImgUrl);
-              print("item::thumbImgUrl = " + qsbkHotPicItem.thumbImgUrl);
-              print(qsbkHotPicItem.authorNickName + "---" + qsbkHotPicItem.content);
-              return new JokeItemWidget().createItemWidget(context, qsbkHotPicItem);
+              print("item::authorImgUrl = " + qsbkItem.authorImgUrl);
+              print("item::thumbImgUrl = " + qsbkItem.thumbImgUrl);
+              print(qsbkItem.authorNickName + "---" + qsbkItem.content);
+              return new JokeItemWidget().createItemWidget(context, qsbkItem);
             },
             separatorBuilder: (BuildContext context, int index) {
               return new Container(height: 1.0, color: Colors.blue);
             },
-            itemCount: mQsbkHotPicItemList.itemList.length)
+            itemCount: mQsbkList.itemList.length)
     );
   }
 }

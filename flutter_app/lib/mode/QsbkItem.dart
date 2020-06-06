@@ -1,4 +1,4 @@
-class QsbkHotPicItem {
+class QsbkItem {
   String id;
   String authorNickName;
   String authorGender;
@@ -11,7 +11,7 @@ class QsbkHotPicItem {
   String statsCommentDetailUrl;
   String md5;
 
-  QsbkHotPicItem(
+  QsbkItem(
       {this.id,
         this.authorNickName,
         this.authorGender,
@@ -24,7 +24,7 @@ class QsbkHotPicItem {
         this.statsCommentDetailUrl,
         this.md5});
 
-  QsbkHotPicItem.fromJson(Map<String, dynamic> json) {
+  QsbkItem.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     authorNickName = json['AuthorNickName'];
     authorGender = json['AuthorGender'];

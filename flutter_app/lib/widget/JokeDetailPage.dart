@@ -7,25 +7,27 @@ import 'package:flutter_app/mode/QsbkItem.dart';
 import 'package:flutter_app/mode/TabItem.dart';
 import 'package:flutter_app/widget/JokeDetailContentWidget.dart';
 
+import 'JokeCommentWidget.dart';
+
 
 class JokeDetailPage extends StatelessWidget{
 
   //http://zxltest.zicp.vip:36619/test/qsbk_hot_pic/detail?hot_pic_id=199
   //https://blog.csdn.net/qq_39969226/article/details/97247140---content provider
-  QsbkHotPicItem mQsbkHotPicItem;
+  QsbkItem mQsbkItem;
 
-  JokeDetailPage(this.mQsbkHotPicItem);
+  JokeDetailPage(this.mQsbkItem);
 
   @override
   Widget build(BuildContext context) {
-    return TabWidget(mQsbkHotPicItem: this.mQsbkHotPicItem);
+    return TabWidget(mQsbkItem: this.mQsbkItem);
   }
 }
 
 //https://www.jianshu.com/p/cefe49a0ab7f
 class TabWidget extends StatefulWidget {
-  QsbkHotPicItem mQsbkHotPicItem;
-  TabWidget({Key key, this.mQsbkHotPicItem}) : super(key : key);
+  QsbkItem mQsbkItem;
+  TabWidget({Key key, this.mQsbkItem}) : super(key : key);
 
   @override
   State<StatefulWidget> createState() {
@@ -59,14 +61,15 @@ class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixi
     print("TabWidgetState()::initTabData");
     tabList = [
       new TabItem('内容', 0),
-      new TabItem('评论', 1),
+      new TabItem('热评', 1),
+      new TabItem('评论', 2),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     print("TabWidgetState()::build");
-    print("TabWidgetState()::build::mQsbkHotPicItem::${widget.mQsbkHotPicItem.authorNickName}");
+    print("TabWidgetState()::build::mQsbkHotPicItem::${widget.mQsbkItem.authorNickName}");
     return Scaffold(
       appBar: AppBar(
         title: Text("详情"),
@@ -107,11 +110,11 @@ class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixi
 //                ],);
                 print("TabWidgetState()::TabBarView::index::${item.index}");
                 if(item.index == 0) {
-                  return ContentWidget(mQsbkHotPicItem: widget.mQsbkHotPicItem);
+                  return ContentWidget(mQsbkHotPicItem: widget.mQsbkItem);
                 } else if (item.index == 1) {
-                  return Stack(children: <Widget>[
-                    Align(alignment:Alignment.topCenter,child: Text(item.title),),
-                  ],);
+                  return new JokeCommentWidget().createWidget(context, widget.mQsbkItem.id, 0);
+                } else if (item.index == 2) {
+                  return new JokeCommentWidget().createWidget(context, widget.mQsbkItem.id, 1);
                 }
               }).toList(),
             ),
@@ -123,7 +126,7 @@ class TabWidgetState extends State<TabWidget> with SingleTickerProviderStateMixi
 }
 
 class ContentWidget extends StatefulWidget {
-  QsbkHotPicItem mQsbkHotPicItem;
+  QsbkItem mQsbkHotPicItem;
   ContentWidget({Key key, this.mQsbkHotPicItem}) : super(key : key);
 
   @override
@@ -141,9 +144,12 @@ class ContentWidgetState extends State<ContentWidget> {
       return;
     }
     isLoading = true;
+          String url = "http://zxltest.zicp.vip:51763/";
+//    String url = "http://192.168.31.63:9090/";
     try {
-      Response qsbkHotPicDetailResponse = await Dio().get(
-          "http://10.241.143.218:9090/test/qsbk/detail?joke_id=${widget.mQsbkHotPicItem.id}");
+      url = url + "test/qsbk/detail?joke_id=${widget.mQsbkHotPicItem.id}";
+      Response qsbkHotPicDetailResponse = await Dio().get(url);
+
       print("getQsbkHotPicDetail::data::${qsbkHotPicDetailResponse.data}");
       mQsbkDetail = new QsbkDetail.fromJson(json.decode(qsbkHotPicDetailResponse.data));
       isLoading = false;
@@ -166,7 +172,22 @@ class ContentWidgetState extends State<ContentWidget> {
   @override
   Widget build(BuildContext context) {
     print("ContentWidget()::build");
-    return new JokeDetailContentWidget().createItemWidget(context, widget.mQsbkHotPicItem, mQsbkDetail);
+    return Center(
+        child :
+        mQsbkDetail == null ?
+        Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new MaterialButton(
+                    child: Text('loading...',style: TextStyle(color: Colors.blue),)
+                ),
+              ],
+            )
+        )
+            :
+      new JokeDetailContentWidget().createItemWidget(context, widget.mQsbkHotPicItem, mQsbkDetail)
+    );
   }
   
 }

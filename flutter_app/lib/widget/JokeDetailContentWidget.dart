@@ -8,31 +8,31 @@ class JokeDetailContentWidget {
   static const String GENDER_WOMEN = "0";
   static const String GENDER_MEN = "1";
 
-  Widget createItemWidget(BuildContext context, QsbkHotPicItem qsbkHotPicItem, QsbkDetail qsbkDetail){
-    return
-      new GestureDetector(
-        child: new Column(
-                  children: <Widget>[
-                    _createAuthorInfoWidget(qsbkHotPicItem),
-                    _createContentWidget(qsbkDetail),
-                    _createThumbWidget(qsbkDetail)
-                  ]
-              ),
-        onTap:(){
-          Navigator.push(context, MaterialPageRoute(builder: (context){
-            return new JokeDetailPage(qsbkHotPicItem);
-          }));
-        }
-      );
+  Widget createItemWidget(BuildContext context, QsbkItem qsbkItem, QsbkDetail qsbkDetail){
+    return ListView.separated(
+        itemBuilder: (BuildContext context, int index) {
+
+          return new Column(
+              children: <Widget>[
+                _createAuthorInfoWidget(qsbkItem),
+                _createContentWidget(qsbkDetail),
+                _createThumbWidget(qsbkDetail)
+              ]
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return new Container(height: 1.0, color: Colors.blue);
+        },
+        itemCount: 1);
   }
 
-  Widget _createAuthorInfoWidget(QsbkHotPicItem qsbkHotPicItem){
-    print("_createAuthorInfoWidget::${qsbkHotPicItem.authorGender}::${qsbkHotPicItem.authorAge}");
+  Widget _createAuthorInfoWidget(QsbkItem qsbkItem){
+    print("_createAuthorInfoWidget::${qsbkItem.authorGender}::${qsbkItem.authorAge}");
 
     String gender = '未知';
-    if (qsbkHotPicItem.authorGender == GENDER_WOMEN) {
+    if (qsbkItem.authorGender == GENDER_WOMEN) {
       gender = "女";
-    } else if (qsbkHotPicItem.authorGender == GENDER_MEN) {
+    } else if (qsbkItem.authorGender == GENDER_MEN) {
       gender = "男";
     }
     return Container(
@@ -43,7 +43,7 @@ class JokeDetailContentWidget {
             Container(
               padding: EdgeInsets.all(8),
               child: Image.network(
-                qsbkHotPicItem.authorImgUrl, width:48, height:48, fit:BoxFit.fitHeight,
+                qsbkItem.authorImgUrl, width:48, height:48, fit:BoxFit.fitHeight,
               ),
             ),
             Expanded(
@@ -53,7 +53,7 @@ class JokeDetailContentWidget {
                     children: <Widget>[
                       Expanded(child: Container(
                         child: Text(
-                          "${qsbkHotPicItem.authorNickName}",
+                          "${qsbkItem.authorNickName}",
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -72,7 +72,7 @@ class JokeDetailContentWidget {
                       Expanded(child: Container(
                         margin: EdgeInsets.only(top: 4),
                         child: Text(
-                          "${qsbkHotPicItem.authorAge}岁 $gender",
+                          "${qsbkItem.authorAge}岁 $gender",
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -120,6 +120,7 @@ class JokeDetailContentWidget {
 
   Widget _createThumbWidget(QsbkDetail qsbkDetail){
     if(qsbkDetail.thumbImgUrl == null || qsbkDetail.thumbImgUrl.isEmpty) {
+    print("JokeDetailContentWidget::_createThumbWidget empty::qsbkDetail.thumbImgUrl = " + qsbkDetail.thumbImgUrl);
       return Container();
     }
     return Padding(

@@ -8,32 +8,32 @@ class JokeItemWidget{
   static const String GENDER_WOMEN = "0";
   static const String GENDER_MEN = "1";
 
-  Widget createItemWidget(BuildContext context, QsbkHotPicItem qsbkHotPicItem){
+  Widget createItemWidget(BuildContext context, QsbkItem qsbkItem){
     return
       new GestureDetector(
         child: new Column(
                   children: <Widget>[
-                    _createAuthorInfoWidget(qsbkHotPicItem),
-                    _createContentWidget(qsbkHotPicItem),
-                    _createThumbWidget(qsbkHotPicItem),
-                    _createVoteCommentWidget(qsbkHotPicItem)
+                    _createAuthorInfoWidget(qsbkItem),
+                    _createContentWidget(qsbkItem),
+                    _createThumbWidget(qsbkItem),
+                    _createVoteCommentWidget(qsbkItem)
                   ]
               ),
         onTap:(){
           Navigator.push(context, MaterialPageRoute(builder: (context){
-            return new JokeDetailPage(qsbkHotPicItem);
+            return new JokeDetailPage(qsbkItem);
           }));
         }
       );
   }
 
-  Widget _createAuthorInfoWidget(QsbkHotPicItem qsbkHotPicItem){
-    print("_createAuthorInfoWidget::${qsbkHotPicItem.authorGender}::${qsbkHotPicItem.authorAge}");
+  Widget _createAuthorInfoWidget(QsbkItem qsbkItem){
+    print("_createAuthorInfoWidget::${qsbkItem.authorGender}::${qsbkItem.authorAge}");
 
     String gender = '未知';
-    if (qsbkHotPicItem.authorGender == GENDER_WOMEN) {
+    if (qsbkItem.authorGender == GENDER_WOMEN) {
       gender = "女";
-    } else if (qsbkHotPicItem.authorGender == GENDER_MEN) {
+    } else if (qsbkItem.authorGender == GENDER_MEN) {
       gender = "男";
     }
 
@@ -45,7 +45,7 @@ class JokeItemWidget{
             Container(
               padding: EdgeInsets.all(8),
               child: Image.network(
-                qsbkHotPicItem.authorImgUrl, width:48, height:48, fit:BoxFit.fitHeight,
+                qsbkItem.authorImgUrl, width:48, height:48, fit:BoxFit.fitHeight,
               ),
             ),
             Expanded(
@@ -55,7 +55,7 @@ class JokeItemWidget{
                     children: <Widget>[
                       Expanded(child: Container(
                         child: Text(
-                          "${qsbkHotPicItem.authorNickName}",
+                          "${qsbkItem.authorNickName}",
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -74,7 +74,7 @@ class JokeItemWidget{
                       Expanded(child: Container(
                         margin: EdgeInsets.only(top: 4),
                         child: Text(
-                          "${qsbkHotPicItem.authorAge}岁 $gender",
+                          "${qsbkItem.authorAge}岁 $gender",
                           softWrap: false,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -96,7 +96,7 @@ class JokeItemWidget{
     );
   }
 
-  Widget _createContentWidget(QsbkHotPicItem qsbkHotPicItem){
+  Widget _createContentWidget(QsbkItem qsbkItem){
     return new Row(
         children:<Widget>[
           Expanded(
@@ -105,7 +105,7 @@ class JokeItemWidget{
               padding: EdgeInsets.only(left: 8,right: 8),
               color: Colors.lime,
               child: Text(
-                "${qsbkHotPicItem.content}",
+                "${qsbkItem.content}",
                 softWrap: true,
                 textAlign: TextAlign.left,
                 style: TextStyle(
@@ -120,8 +120,8 @@ class JokeItemWidget{
     );
   }
 
-  Widget _createThumbWidget(QsbkHotPicItem qsbkHotPicItem){
-    if(qsbkHotPicItem.thumbImgUrl == null || qsbkHotPicItem.thumbImgUrl.isEmpty) {
+  Widget _createThumbWidget(QsbkItem qsbkItem){
+    if(qsbkItem.thumbImgUrl == null || qsbkItem.thumbImgUrl.isEmpty) {
       return Container();
     }
     return Padding(
@@ -132,7 +132,7 @@ class JokeItemWidget{
           child: Column(
             children: <Widget>[
               Image.network(
-                qsbkHotPicItem.thumbImgUrl,fit:BoxFit.fitHeight,
+                qsbkItem.thumbImgUrl,fit:BoxFit.fitHeight,
               )
             ],
           ),
@@ -141,10 +141,10 @@ class JokeItemWidget{
     );
   }
 
-  Widget _createVoteCommentWidget(QsbkHotPicItem qsbkHotPicItem){
+  Widget _createVoteCommentWidget(QsbkItem qsbkItem){
     String intervalStr = "";
-    if((qsbkHotPicItem.statsVoteContent != null && qsbkHotPicItem.statsVoteContent.isNotEmpty) &&
-        (qsbkHotPicItem.statsCommentContent != null && qsbkHotPicItem.statsCommentContent.isNotEmpty)){
+    if((qsbkItem.statsVoteContent != null && qsbkItem.statsVoteContent.isNotEmpty) &&
+        (qsbkItem.statsCommentContent != null && qsbkItem.statsCommentContent.isNotEmpty)){
       intervalStr = " · ";
     }
     return Container(
@@ -154,7 +154,7 @@ class JokeItemWidget{
         children: <Widget>[
           Text(
             //487 好笑 · 18 评论
-            "${qsbkHotPicItem.statsVoteContent}" + intervalStr + "${qsbkHotPicItem.statsCommentContent}",
+            "${qsbkItem.statsVoteContent}" + intervalStr + "${qsbkItem.statsCommentContent}",
               softWrap: true,
               textAlign: TextAlign.left,
               style: TextStyle(

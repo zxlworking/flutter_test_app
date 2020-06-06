@@ -1,15 +1,15 @@
 import 'package:flutter_app/mode/QsbkItem.dart';
 
-class QsbkHotPicItemList {
-  List<QsbkHotPicItem> itemList;
+class QsbkList {
+  List<QsbkItem> itemList;
 
-  QsbkHotPicItemList({this.itemList});
+  QsbkList({this.itemList});
 
-  QsbkHotPicItemList.fromJson(Map<String, dynamic> json) {
+  QsbkList.fromJson(Map<String, dynamic> json) {
     if (json['ItemList'] != null) {
-      itemList = new List<QsbkHotPicItem>();
+      itemList = new List<QsbkItem>();
       json['ItemList'].forEach((v) {
-        itemList.add(new QsbkHotPicItem.fromJson(v));
+        itemList.add(new QsbkItem.fromJson(v));
       });
     }
   }
